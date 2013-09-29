@@ -8,9 +8,13 @@
 
 int main(void)
 {
-    /* insert your hardware initialization here */
+    DDRB = 1 << 5;           /* make the LED pin an output */
+    char i;
     for(;;){
-        /* insert your main loop code here */
+        for(i = 0; i < 10; i++){
+            _delay_ms(30);  /* max is 262.14 ms / F_CPU in MHz */
+        }
+        PORTB ^= 1 << 5;    /* toggle the LED */
     }
     return 0;   /* never reached */
 }
