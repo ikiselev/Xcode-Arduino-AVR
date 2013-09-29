@@ -7,7 +7,7 @@
 	<key>Identifier</key>
 	<string>at.obdev.crosspack.avr</string>
 	<key>Concrete</key>
-        <true/>
+	<true/>
 	<key>Description</key>
 	<string>Crosspack for AVR teplate</string>
 	<key>Options</key>
@@ -37,5 +37,100 @@
 			<dict/>
 		</dict>
 	</dict>
+	<key>Definitions</key>
+	<dict>
+		<key>Build/README.md</key>
+		<dict>
+			<key>Path</key>
+			<string>Build/README.md</string>
+			<key>Group</key>
+			<array>
+				<string>Build</string>
+			</array>
+		</dict>
+		<key>Libraries/README.md</key>
+		<dict>
+			<key>Path</key>
+			<string>Libraries/README.md</string>
+			<key>Group</key>
+			<array>
+				<string>Libraries</string>
+			</array>
+		</dict>
+		<key>Includes/README.md</key>
+		<dict>
+			<key>Path</key>
+			<string>Includes/README.md</string>
+			<key>Group</key>
+			<array>
+				<string>Includes</string>
+			</array>
+		</dict>
+		<key>Sources/README.md</key>
+		<dict>
+			<key>Path</key>
+			<string>Sources/README.md</string>
+			<key>Group</key>
+			<array>
+				<string>Sources</string>
+			</array>
+		</dict>
+		<key>Makefile</key>
+		<dict>
+			<key>Path</key>
+			<string>Makefile</string>
+		</dict>
+		<key>main.c</key>
+		<dict>
+			<key>Path</key>
+			<string>main.c</string>
+		</dict>
+	</dict>
+	<key>Nodes</key>
+	<array>
+		<string>Build/README.md</string>
+		<string>Libraries/README.md</string>
+		<string>Includes/README.md</string>
+		<string>Sources/README.md</string>
+		<string>Makefile</string>
+		<string>main.c</string>
+	</array>
+	<key>Targets</key>
+	<array>
+		<dict>
+			<key>BuildPhases</key>
+			<array>
+				<dict>
+					<key>Class</key>
+					<string>Sources</string>
+				</dict>
+			</array>
+			<key>Configurations</key>
+			<dict>
+				<key>Release</key>
+				<dict>
+					<key>COPY_PHASE_STRIP</key>
+					<string>YES</string>
+					<key>DEBUG_INFORMATION_FORMAT</key>
+					<string>dwarf-with-dsym</string>
+				</dict>
+			</dict>
+			<key>Name</key>
+			<string>___PACKAGENAME___</string>
+			<key>ProductType</key>
+			<string>com.apple.product-type.tool</string>
+			<key>SharedSettings</key>
+			<dict>
+				<key>USER_HEADER_SEARCH_PATHS</key>
+				<string>/usr/local/CrossPack-AVR/avr/**</string>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>YES</string>
+				<key>GCC_ENABLE_OBJC_EXCEPTIONS</key>
+				<string>YES</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>
