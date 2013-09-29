@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>Kind</key>
-	<string>Xcode.Xcode5.Crosspack-for-AVR</string>
+	<string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
 	<key>Identifier</key>
 	<string>at.obdev.crosspack.avr</string>
+	<key>Concrete</key>
+        <true/>
 	<key>Description</key>
 	<string>Crosspack for AVR teplate</string>
 	<key>Options</key>
