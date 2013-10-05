@@ -4,7 +4,7 @@ AVR Xcode 5 Template setup
 	cd ~/Library/Developer/Xcode/Templates/
 	mkdir Crosspack-AVR
 	cd Crosspack-AVR
-	git clone https://github.com/ikiselev/AVR-devices-Makefile.git Crosspack-AVR.xctemplate
+	git clone https://github.com/ikiselev/AVR-devices-Makefile.git .
 	ln -s ~/Library/Developer/Xcode/Templates/Crosspack-AVR/Crosspack-AVR.xctemplate/ /usr/local/CrossPack-AVR/etc/templates/TemplateProject
 Note, that Xcode don't like symlinks.
 
