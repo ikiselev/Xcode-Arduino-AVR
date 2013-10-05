@@ -1,21 +1,19 @@
-/* Name: main.c
- * Author: <insert your name here>
- * Copyright: <insert your copyright message here>
- * License: <insert your license reference here>
+/* Name: ___PROJECTNAME___
+ * Author: ___FULLUSERNAME___, ___DATE___ ___TIME___
  */
 
-#include <avr/io.h>
-#include <util/delay.h> 
+#include "Arduino.h"
+
+#include "___PROJECTNAMEASIDENTIFIER___.___VARIABLE_ExtensionConfigName:identifier___"
 
 int main(void)
 {
-    DDRB = 1 << 5;           /* make the LED pin an output */
-    char i;
-    for(;;){
-        for(i = 0; i < 10; i++){
-            _delay_ms(30);  /* max is 262.14 ms / F_CPU in MHz */
-        }
-        PORTB ^= 1 << 5;    /* toggle the LED */
-    }
-    return 0;   /* never reached */
+	init();
+	setup();
+
+	for (;;) {
+		loop();
+	}
+
+	return 0; // never reached
 }

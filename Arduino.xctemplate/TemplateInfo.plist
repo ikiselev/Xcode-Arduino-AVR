@@ -42,23 +42,28 @@
 			<key>Description</key>
 			<string>Your chip</string>
 			<key>Type</key>
-			<string>combo</string>
-			<key>Values</key>
-			<array>
-				<string>__AVR_ATmega328__</string>
-				<string>__AVR_ATmega328P__</string>
-				<string>__AVR_ATmega8A__</string>
-			</array>
+			<string>popup</string>
+			<key>Units</key>
+			<dict>
+				<key>Arduino Uno</key>
+				<dict>
+					<key>SharedSettings</key>
+					<dict>
+						<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+						<string>__AVR_ATmega328__</string>
+					</dict>
+				</dict>
+				<key>Arduino Mini with ATmega328</key>
+				<dict>
+					<key>SharedSettings</key>
+					<dict>
+						<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+						<string>__AVR_ATmega8A__</string>
+					</dict>
+				</dict>
+			</dict>
 		</dict>
 	</array>
-	<key>Project</key>
-	<dict>
-		<key>Configurations</key>
-		<dict>
-			<key>Release</key>
-			<dict/>
-		</dict>
-	</dict>
 	<key>Definitions</key>
 	<dict>
 		<key>Build/README.md</key>
@@ -117,9 +122,51 @@
 		<string>Makefile</string>
 		<string>main.c</string>
 	</array>
+	<key>Project</key>
+	<dict>
+		<key>SharedSettings</key>
+		<dict>
+			<key>PATH</key>
+			<string>$(PATH):$(PROJECT_DIR)</string>
+			<key>PRODUCT_NAME</key>
+			<string>$(TARGET_NAME)</string>
+		</dict>
+		<key>Configurations</key>
+		<dict>
+			<key>Release</key>
+			<dict/>
+		</dict>
+	</dict>
 	<key>Targets</key>
 	<array>
 		<dict>
+			<key>Name</key>
+			<string>FLASH</string>
+			<key>BuildToolPath</key>
+			<string>make</string>
+			<key>TargetType</key>
+			<string>Legacy</string>
+			<key>BuildToolArgsString</key>
+			<string>all -C &quot;$(PROJECT)&quot;</string>
+			<key>BuildToolDirectory</key>
+			<string>$(PROJECT)</string>
+			<key>BuildWorkingDirectory</key>
+			<string>$(PROJECT)</string>
+			<key>BuildToolWorkingDirectory</key>
+			<string>$(PROJECT)</string>
+			<key>BuildToolWorkingDir</key>
+			<string>$(PROJECT)</string>
+			<key>CustomBuildSettings</key>
+			<dict>
+				<key>BuildToolDirectory</key>
+				<string>$(PROJECT)</string>
+				<key>BuildWorkingDirectory</key>
+				<string>$(PROJECT)</string>
+				<key>BuildToolWorkingDirectory</key>
+				<string>$(PROJECT)</string>
+				<key>BuildToolWorkingDir</key>
+				<string>$(PROJECT)</string>
+			</dict>
 			<key>BuildPhases</key>
 			<array>
 				<dict>
@@ -131,15 +178,8 @@
 					<string>ShellScript</string>
 				</dict>
 			</array>
-			<key>Name</key>
-			<string>FLASH</string>
 			<key>ProductType</key>
 			<string>com.apple.product-type.tool</string>
-			<key>SharedSettings</key>
-			<dict>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-			</dict>
 		</dict>
 		<dict>
 			<key>BuildPhases</key>
@@ -165,8 +205,6 @@
 			<string>com.apple.product-type.tool</string>
 			<key>SharedSettings</key>
 			<dict>
-				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-				<string>___VARIABLE_chipISA___</string>
 				<key>USER_HEADER_SEARCH_PATHS</key>
 				<string>/usr/local/CrossPack-AVR/avr/**</string>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
