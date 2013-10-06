@@ -1,9 +1,3 @@
-# Name: Makefile
-# Author: <insert your name here>
-# Copyright: <insert your copyright message here>
-# License: <insert your license reference here>
-
-# This is a prototype Makefile. Modify it according to your needs.
 # You should at least check the settings for
 # DEVICE ....... The AVR device you compile for
 # CLOCK ........ Target AVR clock rate in Hertz
@@ -16,35 +10,46 @@
 #                   default_programmer = "stk500v2"
 #                   default_serial = "avrdoper"
 # FUSES ........ Parameters for avrdude to flash the fuses appropriately.
+FRAMEWORK_PATH   := /Users/$(USER)/Dropbox/Arduino/Framework
+CORE_LIB_PATH    := $(FRAMEWORK_PATH)/cores/Arduino
+BOARDS_TXT       := $(FRAMEWORK_PATH)/boards.txt
+APP_LIB_PATH     := $(FRAMEWORK_PATH)/../Libraries/
+
+PROGRAMMER = -c usbasp
+
+
 
 DEVICE     = atmega8
 CLOCK      = 8000000
-PROGRAMMER = -c usbasp#-c stk500v2 -P avrdoper
-OBJECTS    = main.o
+
 FUSES      = -U hfuse:w:0xd9:m -U lfuse:w:0x24:m
 
-# ATMega8 fuse bits used above (fuse bits for other devices are different!):
-# Example for 8 MHz internal oscillator
-# Fuse high byte:
-# 0xd9 = 1 1 0 1   1 0 0 1 <-- BOOTRST (boot reset vector at 0x0000)
-#        ^ ^ ^ ^   ^ ^ ^------ BOOTSZ0
-#        | | | |   | +-------- BOOTSZ1
-#        | | | |   +---------- EESAVE (set to 0 to preserve EEPROM over chip erase)
-#        | | | +-------------- CKOPT (clock option, depends on oscillator type)
-#        | | +---------------- SPIEN (if set to 1, serial programming is disabled)
-#        | +------------------ WDTON (if set to 0, watchdog is always on)
-#        +-------------------- RSTDISBL (if set to 0, RESET pin is disabled)
-# Fuse low byte:
-# 0x24 = 0 0 1 0   0 1 0 0
-#        ^ ^ \ /   \--+--/
-#        | |  |       +------- CKSEL 3..0 (8M internal RC)
-#        | |  +--------------- SUT 1..0 (slowly rising power)
-#        | +------------------ BODEN (if 0, brown-out detector is enabled)
-#        +-------------------- BODLEVEL (if 0: 4V, if 1: 2.7V)
-#
 # For computing fuse byte values for other devices and options see
 # the fuse bit calculator at http://www.engbedded.com/fusecalc/
 
+# Function PARSE_BOARD data retrieval from boards.txt
+# result = $(call PARSE_BOARD 'boardname','parameter')
+#
+PARSE_BOARD = $(shell if [ -f $(BOARDS_TXT) ]; then grep ^$(1).$(2)= $(BOARDS_TXT) | cut -d = -f 2; fi; )
+
+# Function PARSE_FILE data retrieval from specified file
+# result = $(call PARSE_FILE 'boardname','parameter','filename')
+#
+PARSE_FILE = $(shell if [ -f $(3) ]; then grep ^$(1).$(2) $(3) | cut -d = -f 2; fi; )
+
+
+ifndef BOARD_TAG
+	$(error BOARD_TAG not defined)
+endif
+
+MCU   = $(call PARSE_BOARD,$(BOARD_TAG),build.mcu)
+
+$(info Board: $(BOARD_TAG))
+$(info MCU: $(MCU))
+$(error Thats all for now)
+
+
+OBJECTS    = main.o
 
 # Tune the lines below only if you know what you are doing:
 
