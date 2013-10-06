@@ -30,7 +30,7 @@
 		</dict>
 		<dict>
 			<key>Default</key>
-			<string>__AVR_ATmega8A__</string>
+			<string>Arduino Mini with ATmega328</string>
 			<key>Identifier</key>
 			<string>chipISA</string>
 			<key>Required</key>
@@ -47,18 +47,28 @@
 			<dict>
 				<key>Arduino Uno</key>
 				<dict>
-					<key>SharedSettings</key>
+					<key>Project</key>
 					<dict>
-						<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-						<string>__AVR_ATmega328__</string>
+						<key>SharedSettings</key>
+						<dict>
+							<key>BOARD_TAG</key>
+							<string>uno</string>
+							<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+							<string>__AVR_ATmega328__</string>
+						</dict>
 					</dict>
 				</dict>
 				<key>Arduino Mini with ATmega328</key>
 				<dict>
-					<key>SharedSettings</key>
+					<key>Project</key>
 					<dict>
-						<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-						<string>__AVR_ATmega8A__</string>
+						<key>SharedSettings</key>
+						<dict>
+							<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+							<string>__AVR_ATmega8A__</string>
+							<key>BOARD_TAG</key>
+							<string>nano</string>
+						</dict>
 					</dict>
 				</dict>
 			</dict>
@@ -167,19 +177,6 @@
 				<key>BuildToolWorkingDir</key>
 				<string>$(PROJECT)</string>
 			</dict>
-			<key>BuildPhases</key>
-			<array>
-				<dict>
-					<key>ShellScript</key>
-					<string>cd $PROJECT_NAME &amp;&amp; make flash</string>
-					<key>ShellPath</key>
-					<string>/bin/sh</string>
-					<key>Class</key>
-					<string>ShellScript</string>
-				</dict>
-			</array>
-			<key>ProductType</key>
-			<string>com.apple.product-type.tool</string>
 		</dict>
 		<dict>
 			<key>BuildPhases</key>
