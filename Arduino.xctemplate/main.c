@@ -4,7 +4,7 @@
 
 #include "Arduino.h"
 
-#include "___PROJECTNAMEASIDENTIFIER___.___VARIABLE_ExtensionConfigName:identifier___"
+#include "___PROJECTNAMEASIDENTIFIER___.ino"
 
 int main(void)
 {

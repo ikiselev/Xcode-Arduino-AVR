@@ -76,6 +76,13 @@
 	</array>
 	<key>Definitions</key>
 	<dict>
+		<key>___PROJECTNAMEASIDENTIFIER___.ino</key>
+		<dict>
+			<key>AllowedTypes</key>
+			<string>public.c-plus-plus-source</string>
+			<key>Path</key>
+			<string>___PROJECTNAMEASIDENTIFIER___.ino</string>
+		</dict>
 		<key>Build/README.md</key>
 		<dict>
 			<key>Path</key>
@@ -125,6 +132,7 @@
 	</dict>
 	<key>Nodes</key>
 	<array>
+		<string>___PROJECTNAMEASIDENTIFIER___.ino</string>
 		<string>Build/README.md</string>
 		<string>Libraries/README.md</string>
 		<string>Includes/README.md</string>
