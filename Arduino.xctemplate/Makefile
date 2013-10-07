@@ -13,7 +13,7 @@
 FRAMEWORK_PATH   := /Users/$(USER)/Dropbox/Arduino/Framework
 CORE_LIB_PATH    := $(FRAMEWORK_PATH)/cores/arduino
 BOARDS_TXT       := $(FRAMEWORK_PATH)/boards.txt
-APP_LIB_PATH     := $(FRAMEWORK_PATH)/../Libraries/
+APP_LIB_PATH     := $(FRAMEWORK_PATH)/../Libraries
 
 ## DEBUG:
 TARGET := TestArduino
