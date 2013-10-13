@@ -1,5 +1,6 @@
-// Include application, user and local libraries
-
+/* Name: ___PROJECTNAME___
+ * Author: ___FULLUSERNAME___, ___DATE___ ___TIME___
+ */
 
 // Define variables and constants
 
