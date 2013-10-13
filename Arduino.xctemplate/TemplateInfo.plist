@@ -211,7 +211,7 @@
 			<key>SharedSettings</key>
 			<dict>
 				<key>USER_HEADER_SEARCH_PATHS</key>
-				<string>/usr/local/CrossPack-AVR/avr/**</string>
+				<string>/usr/local/CrossPack-AVR/avr/** /Users/$(USER)/Dropbox/Arduino/**</string>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
 				<key>GCC_ENABLE_OBJC_EXCEPTIONS</key>
