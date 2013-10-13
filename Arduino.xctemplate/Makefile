@@ -1,3 +1,6 @@
+#
+# PATHS
+#
 ARDUINO_PATHER   = /Users/$(USER)/Dropbox/Arduino
 FRAMEWORK_PATH   = $(ARDUINO_PATHER)/Framework
 
@@ -9,39 +12,47 @@ USER_LIB_PATH  = $(wildcard $(ARDUINO_PATHER)/?ibraries)
 
 TOOLCHAIN_BIN_DIRECTORY = /usr/local/CrossPack-AVR/bin
 
+#
+# MAIN FUNCTION
+#
+TAKE_LOCAL_MAIN_FUNCTION = 0
+
+#
+# CONSOLE OVERRIDE
+#
+BOARD_TAG := nano
+SKETCH_EXTENSION = ino
+
+
 
 #TODO: Programmer info must be here
 
 
-## DEBUG:
-BOARD_TAG := nano
-SKETCH_EXTENSION = ino
-# DEBUG END
 
-#PROGRAMMER = -c usbasp
-USER_PATH   := $(wildcard ~/)
-
-
+#
+# LIBRARIES
+#
 APP_LIBS_LIST =
-
 USER_LIBS_LIST =
-
 EXCLUDE_LIBS = WiFi Esplora Robot_Control Robot_Control/utility Robot_Motor GSM TFT TFT/utility
 
-# Manage path with space in the name
+
 #
-CURRENT_DIR   := $(shell pwd)
-CURRENT_DIR   := $(shell echo '$(CURRENT_DIR)' | sed 's/ /\\\ /g')
+# EXCLUDE LIST
+#
+EXCLUDE_NAMES  = Example example Examples examples Archive archive Archives archives Documentation documentation Reference reference
+EXCLUDE_NAMES += ArduinoTestSuite
+EXCLUDE_NAMES += $(EXCLUDE_LIBS)
+EXCLUDE_LIST   = $(addprefix %,$(EXCLUDE_NAMES))
 
-MAKEFILE_PATH  = $(CURRENT_DIR)/Makefiles
-UTILITIES_PATH = $(CURRENT_DIR)/Utilities
 
 
 
 
-##############################################
-##############################################
-#####	STEP 1
+
+
+
+
 
 #TODO: Узнать почему несколько скетчей - плохо
 ifneq ($(SKETCH_EXTENSION),cpp)
@@ -55,30 +66,12 @@ ifneq ($(SKETCH_EXTENSION),cpp)
 endif
 
 
-# Board selection
-# ----------------------------------
-# BOARD_TAG
+
 #
-ifneq ($(MAKECMDGOALS),boards)
-    ifneq ($(MAKECMDGOALS),clean)
-        ifndef BOARD_TAG
-            $(error BOARD_TAG not defined)
-        endif
-    endif
-endif
-
-
-# Miscellaneous
-# ----------------------------------
-# Variables
+# VARIABLES
 #
-TARGET      := sketch
-
-# main.cpp selection
-# = 1 takes local main.cpp
-#
-TAKE_LOCAL_MAIN_FUNCTION = 0
-
+TARGET := sketch
+OBJDIR = Build
 
 
 ifeq ($(TAKE_LOCAL_MAIN_FUNCTION),1)
@@ -88,33 +81,15 @@ else
 endif
 
 
-# Builds directory
-#
-OBJDIR  = Builds
-
-
 # Function PARSE_BOARD data retrieval from boards.txt
 # result = $(call PARSE_BOARD 'boardname','parameter')
-#
 PARSE_BOARD = $(shell if [ -f $(BOARDS_TXT) ]; then grep ^$(1).$(2)= $(BOARDS_TXT) | cut -d = -f 2; fi; )
 
-# Function PARSE_FILE data retrieval from specified file
-# result = $(call PARSE_FILE 'boardname','parameter','filename')
-#
-PARSE_FILE = $(shell if [ -f $(3) ]; then grep ^$(1).$(2) $(3) | cut -d = -f 2; fi; )
 
-
-
-# Processor model and frequency
-# ----------------------------------
-#
 MCU   = $(call PARSE_BOARD,$(BOARD_TAG),build.mcu)
 F_CPU = $(call PARSE_BOARD,$(BOARD_TAG),build.f_cpu)
 
 
-# Clean if new BOARD_TAG
-# ----------------------------------
-#
 NEW_TAG := $(strip $(OBJDIR)/$(BOARD_TAG)-TAG) #
 OLD_TAG := $(strip $(wildcard $(OBJDIR)/*-TAG)) # */
 
@@ -125,29 +100,23 @@ else
 endif
 
 
-##############################################
-##############################################
-#####	Arduino mk 1
-
-
-
-# Rules for making a c++ file from the main sketch (.pde)
-#
+# MAKE cpp FROM ino
 PDEHEADER      = \\\#include \"Arduino.h\"
+
+# FOR GREP main.cpp FROM FRAMEWORK PATH
 PDEHEADER_SYS  = \\\#include \<Arduino.h\>
-
-
 
 SKETCHES = $(addprefix $(OBJDIR)/, $(subst .$(SKETCH_EXTENSION),.cpp,$(wildcard *.$(SKETCH_EXTENSION))))
 SKETCH_OBJS = $(SKETCHES:.cpp=.o)
 
 
+#include sketches into main.cpp
 SKETCH_INCLUDE = \\\#include \"$(sketchName)\"
 SKETCH_INCLUDES = $(foreach sketchName,$(subst .$(SKETCH_EXTENSION),.cpp,$(wildcard *.$(SKETCH_EXTENSION))),$(SKETCH_INCLUDE))
 
 
-
-# Tool-chain names
+#
+# TOOL-CHAIN NAMES
 #
 CC      = $(TOOLCHAIN_BIN_DIRECTORY)/avr-gcc
 CXX     = $(TOOLCHAIN_BIN_DIRECTORY)/avr-g++
@@ -168,33 +137,12 @@ MCU_FLAG_NAME  = mmcu
 EXTRA_LDFLAGS  = 
 EXTRA_CPPFLAGS = -MMD -I$(VARIANT_PATH) $(addprefix -D, $(PLATFORM_TAG))
 
-
-##############################################
-##############################################
-#####	Arduino mk 1 END, STEP 1 continue
-
-
-
-# List of sub-paths to be excluded
 #
-EXCLUDE_NAMES  = Example example Examples examples Archive archive Archives archives Documentation documentation Reference reference
-EXCLUDE_NAMES += ArduinoTestSuite
-EXCLUDE_NAMES += $(EXCLUDE_LIBS)
-EXCLUDE_LIST   = $(addprefix %,$(EXCLUDE_NAMES))
-
-
-
-
-
-##############################################
-##############################################
-#####	AVRDUDE
-
+# AVRDUDE
+#
 AVRDUDE = $(TOOLCHAIN_BIN_DIRECTORY)/avrdude
 
 ifndef AVRDUDE_COM_OPTS
-	# Specific AVRDUDE location and options
-	#
 	#AVRDUDE_COM_OPTS  = -D -p$(MCU) -C$
     AVRDUDE_COM_OPTS  = -q -V -F -p$(MCU) -C$
 endif
@@ -203,52 +151,38 @@ ifndef AVRDUDE_OPTS
 endif
 
 
-
 # fuses if you're using e.g. ISP
-#
 ifndef ISP_LOCK_FUSE_PRE
-ISP_LOCK_FUSE_PRE  = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.unlock_bits)
+	ISP_LOCK_FUSE_PRE  = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.unlock_bits)
 endif
 
 ifndef ISP_LOCK_FUSE_POST
-ISP_LOCK_FUSE_POST = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.lock_bits)
+	ISP_LOCK_FUSE_POST = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.lock_bits)
 endif
 
 ifndef ISP_HIGH_FUSE
-ISP_HIGH_FUSE      = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.high_fuses)
+	ISP_HIGH_FUSE      = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.high_fuses)
 endif
 
 ifndef ISP_LOW_FUSE
-ISP_LOW_FUSE       = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.low_fuses)
+	ISP_LOW_FUSE       = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.low_fuses)
 endif
 
 ifndef ISP_EXT_FUSE
-ISP_EXT_FUSE       = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.extended_fuses)
+	ISP_EXT_FUSE       = $(call PARSE_BOARD,$(BOARD_TAG),bootloader.extended_fuses)
 endif
 
 
 
-##############################################
-##############################################
-#####	STEP 2
-
 
 # CORE libraries
-# ----------------------------------
 #
-
 s5              = $(subst .h,,$(subst $(CORE_LIB_PATH)/,,$(wildcard $(CORE_LIB_PATH)/*.h))) # */
 CORE_LIBS_LIST  = $(subst $(USER_LIB_PATH)/,,$(filter-out $(EXCLUDE_LIST),$(s5)))
 
 
-# List of sources
-# ----------------------------------
-#
-
 # CORE sources
 #
-
-
 ifdef CORE_LIB_PATH
     CORE_C_SRCS     = $(wildcard $(CORE_LIB_PATH)/*.c) # */
     
@@ -263,9 +197,8 @@ ifdef CORE_LIB_PATH
 endif
 
 
-# APPlication Arduino
+# Application Arduino
 #
-
 ifeq ($(APP_LIBS_LIST),)
     s1         = $(realpath $(sort $(dir $(wildcard $(APP_LIB_PATH)/*/*.h $(APP_LIB_PATH)/*/*/*.h)))) # */
     APP_LIBS_LIST = $(subst $(APP_LIB_PATH)/,,$(filter-out $(EXCLUDE_LIST),$(s1)))
@@ -286,11 +219,9 @@ ifndef APP_LIB_OBJS
     APP_LIB_OBJS     += $(patsubst $(APP_LIB_PATH)/%.cpp,$(OBJDIR)/libs/%.o,$(APP_LIB_CPP_SRC))
 endif 
 
-# USER libraries
-# wildcard required for ~ management
-# ?ibraries required for libraries and Libraries
-#
 
+# USER libraries
+#
 ifndef USER_LIBS_LIST
 	s2               = $(realpath $(sort $(dir $(wildcard $(USER_LIB_PATH)/*/*.h)))) # */
     USER_LIBS_LIST   = $(subst $(USER_LIB_PATH)/,,$(filter-out $(EXCLUDE_LIST),$(s2)))
@@ -306,6 +237,7 @@ ifneq ($(USER_LIBS_LIST),0)
     USER_OBJS        = $(patsubst $(USER_LIB_PATH)/%.cpp,$(OBJDIR)/libs/%.o,$(USER_LIB_CPP_SRC))
     USER_OBJS       += $(patsubst $(USER_LIB_PATH)/%.c,$(OBJDIR)/libs/%.o,$(USER_LIB_C_SRC))
 endif
+
 
 # LOCAL sources
 #
@@ -341,12 +273,7 @@ OBJS        = $(REMOTE_OBJS) $(LOCAL_OBJS)
 #
 DEPS   = $(OBJS:.o=.d)
 
-
-
-# Rules
-# ----------------------------------
 #
-
 # Main targets
 #
 TARGET_A   = $(OBJDIR)/$(TARGET).a
@@ -408,6 +335,9 @@ ifndef OBJCOPYFLAGS
     OBJCOPYFLAGS  = -Oihex -R .eeprom
 endif
 
+
+CURRENT_DIR   := $(shell pwd)
+CURRENT_DIR   := $(shell echo '$(CURRENT_DIR)' | sed 's/ /\\\ /g')
 
 
 main_preprocess:
@@ -722,21 +652,17 @@ size:
 		@if [ -f $(TARGET_ELF) ]; then echo 'Estimated SRAM used:' $(shell $(RAMSIZE)) $(MAX_RAM_BYTES); echo; fi
 
 
-clean:
+clean:	changed
 		@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
-		@echo "nil" > $(OBJDIR)/nil
 		@echo "---- Clean ----"
 #		-@rm -r $(OBJDIR)/* # */ 
 
 changed:
-		@echo "---- Clean changed ----"
 ifeq ($(CHANGE_FLAG),1)
+		@echo "---- Clean changed ----"
 		@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
 		@echo "nil" > $(OBJDIR)/nil
 		$(REMOVE) $(OBJDIR)/* # */
-else
-#		$(REMOVE) $(LOCAL_OBJS)
-		for f in $(LOCAL_OBJS); do if [ -f $$f ]; then rm $$f; fi; done
 endif
 
 depends:	$(DEPS)
