@@ -339,8 +339,7 @@ CURRENT_DIR   := $(shell echo '$(CURRENT_DIR)' | sed 's/ /\\\ /g')
 
 main_preprocess:
 	@echo --------------------MAIN PREPROCESS FROM: $(MAIN_CPP)--------------------------------
-	@$(REMOVE) $(OBJDIR)/main.cpp
-	@$(ECHO) $(PDEHEADER_SYS) >> $(OBJDIR)/main.cpp
+	@$(ECHO) $(PDEHEADER_SYS) > $(OBJDIR)/main.cpp
 	@$(ECHO) $(SKETCH_INCLUDES) >> $(OBJDIR)/main.cpp
 	@$(call GREP_INVERSE,$(PDEHEADER_SYS),$(MAIN_CPP)) >> $(OBJDIR)/main.cpp
 
@@ -653,7 +652,7 @@ size:
 clean:	changed
 		@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
 		@echo "---- Clean ----"
-#		-@rm -r $(OBJDIR)/* # */ 
+		-@rm -r $(OBJDIR)/* # */ 
 
 changed:
 ifeq ($(CHANGE_FLAG),1)
