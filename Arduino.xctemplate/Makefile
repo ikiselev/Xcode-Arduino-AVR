@@ -20,12 +20,12 @@ TAKE_LOCAL_MAIN_FUNCTION = 0
 #
 # CONSOLE OVERRIDE
 #
-BOARD_TAG := nano
+BOARD_TAG := atmega8
 SKETCH_EXTENSION = ino
 
 
 
-#TODO: Programmer info must be here
+PROGRAMMER = usbasp
 
 
 
@@ -34,7 +34,7 @@ SKETCH_EXTENSION = ino
 #
 APP_LIBS_LIST =
 USER_LIBS_LIST =
-EXCLUDE_LIBS = WiFi Esplora Robot_Control Robot_Control/utility Robot_Motor GSM TFT TFT/utility
+EXCLUDE_LIBS = WiFi Esplora Robot_Control Robot_Control/utility Robot_Motor GSM TFT TFT/utility SoftwareSerial
 
 
 #
@@ -143,11 +143,8 @@ EXTRA_CPPFLAGS = -MMD -I$(VARIANT_PATH) $(addprefix -D, $(PLATFORM_TAG))
 AVRDUDE = $(TOOLCHAIN_BIN_DIRECTORY)/avrdude
 
 ifndef AVRDUDE_COM_OPTS
-	#AVRDUDE_COM_OPTS  = -D -p$(MCU) -C$
-    AVRDUDE_COM_OPTS  = -q -V -F -p$(MCU) -C$
-endif
-ifndef AVRDUDE_OPTS
-    AVRDUDE_OPTS      = -c$ -b$
+	AVRDUDE_COM_OPTS  = -c $(PROGRAMMER) -p$(MCU)
+    #AVRDUDE_COM_OPTS  = -q -V -F -p$(MCU) -C$
 endif
 
 
@@ -342,6 +339,7 @@ CURRENT_DIR   := $(shell echo '$(CURRENT_DIR)' | sed 's/ /\\\ /g')
 
 main_preprocess:
 	@echo --------------------MAIN PREPROCESS FROM: $(MAIN_CPP)--------------------------------
+	@$(REMOVE) $(OBJDIR)/main.cpp
 	@$(ECHO) $(PDEHEADER_SYS) >> $(OBJDIR)/main.cpp
 	@$(ECHO) $(SKETCH_INCLUDES) >> $(OBJDIR)/main.cpp
 	@$(call GREP_INVERSE,$(PDEHEADER_SYS),$(MAIN_CPP)) >> $(OBJDIR)/main.cpp
@@ -626,7 +624,7 @@ $(DEP_FILE):	$(OBJDIR) $(DEPS)
 upload:
 		@echo "---- Upload ---- "
 
-		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(AVRDUDE_OPTS) -Uflash:w:$(TARGET_HEX):i
+		$(AVRDUDE) $(AVRDUDE_COM_OPTS) -Uflash:w:$(TARGET_HEX):i
 
 		@echo "==== upload done ==== "
 
