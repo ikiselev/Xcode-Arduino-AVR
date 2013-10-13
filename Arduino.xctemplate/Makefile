@@ -652,6 +652,7 @@ size:
 clean:	changed
 		@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
 		@echo "---- Clean ----"
+		@echo "nil" > $(OBJDIR)/nil
 		-@rm -r $(OBJDIR)/* # */ 
 
 changed:
