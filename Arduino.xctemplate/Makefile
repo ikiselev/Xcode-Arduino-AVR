@@ -72,7 +72,7 @@ endif
 # VARIABLES
 #
 TARGET := sketch
-OBJDIR = Build
+OBJDIR = ../build/Makefile
 
 
 ifeq ($(TAKE_LOCAL_MAIN_FUNCTION),1)
