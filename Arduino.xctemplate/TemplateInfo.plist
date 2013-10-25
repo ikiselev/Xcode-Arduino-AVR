@@ -96,15 +96,6 @@
 			<key>Path</key>
 			<string>___PROJECTNAMEASIDENTIFIER___.ino</string>
 		</dict>
-		<key>Build/README.md</key>
-		<dict>
-			<key>Path</key>
-			<string>Build/README.md</string>
-			<key>Group</key>
-			<array>
-				<string>Build</string>
-			</array>
-		</dict>
 		<key>Libraries/README.md</key>
 		<dict>
 			<key>Path</key>
@@ -146,7 +137,6 @@
 	<key>Nodes</key>
 	<array>
 		<string>___PROJECTNAMEASIDENTIFIER___.ino</string>
-		<string>Build/README.md</string>
 		<string>Libraries/README.md</string>
 		<string>Includes/README.md</string>
 		<string>Sources/README.md</string>
