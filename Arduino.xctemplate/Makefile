@@ -31,15 +31,16 @@ PROGRAMMER = usbasp
 
 #
 # LIBRARIES
+# You need to add folder names of used libraries
 #
 APP_LIBS_LIST =
 USER_LIBS_LIST =
-EXCLUDE_LIBS = WiFi Esplora Robot_Control Robot_Control/utility Robot_Motor GSM TFT TFT/utility SoftwareSerial
 
 
 #
 # EXCLUDE LIST
 #
+EXCLUDE_LIBS = WiFi Esplora Robot_Control Robot_Control/utility Robot_Motor GSM TFT TFT/utility SoftwareSerial
 EXCLUDE_NAMES  = Example example Examples examples Archive archive Archives archives Documentation documentation Reference reference
 EXCLUDE_NAMES += ArduinoTestSuite
 EXCLUDE_NAMES += $(EXCLUDE_LIBS)
@@ -170,6 +171,12 @@ ifndef ISP_EXT_FUSE
 endif
 
 
+
+FUSES =  -e -U lock:w:$(ISP_LOCK_FUSE_PRE):m -U hfuse:w:$(ISP_HIGH_FUSE):m -U lfuse:w:$(ISP_LOW_FUSE):m
+
+ifdef ISP_EXT_FUSE
+	FUSES += -U efuse:w:$(ISP_EXT_FUSE):m
+endif
 
 
 # CORE libraries
@@ -628,14 +635,9 @@ upload:
 		@echo "==== upload done ==== "
 
 
-
 ispload:	$(TARGET_HEX)
 		@echo "---- ISP upload ---- "
-		$(AVRDUDE) $(AVRDUDE_COM_OPTS) -e \
-			-U lock:w:$(ISP_LOCK_FUSE_PRE):m \
-			-U hfuse:w:$(ISP_HIGH_FUSE):m \
-			-U lfuse:w:$(ISP_LOW_FUSE):m \
-			-U efuse:w:$(ISP_EXT_FUSE):m
+		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(FUSES)
 		$(AVRDUDE) $(AVRDUDE_COM_OPTS) -D -U flash:w:$(TARGET_HEX):i
 		$(AVRDUDE) $(AVRDUDE_COM_OPTS) -U lock:w:$(ISP_LOCK_FUSE_POST):m
 
