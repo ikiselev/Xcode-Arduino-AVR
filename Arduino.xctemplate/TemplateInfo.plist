@@ -92,7 +92,9 @@
 		<key>___PROJECTNAMEASIDENTIFIER___.ino</key>
 		<dict>
 			<key>AllowedTypes</key>
-			<string>public.c-plus-plus-source</string>
+			<array>
+				<string>public.c-plus-plus-source</string>
+			</array>
 			<key>Path</key>
 			<string>___PROJECTNAMEASIDENTIFIER___.ino</string>
 		</dict>
@@ -195,6 +197,10 @@
 				<dict>
 					<key>Class</key>
 					<string>Sources</string>
+				</dict>
+				<dict>
+					<key>Class</key>
+					<string>Frameworks</string>
 				</dict>
 			</array>
 			<key>Configurations</key>
