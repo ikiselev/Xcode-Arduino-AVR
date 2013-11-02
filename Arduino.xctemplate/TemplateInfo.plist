@@ -80,7 +80,7 @@
 							<key>GCC_PREPROCESSOR_DEFINITIONS</key>
 							<string>__AVR_ATmega8A__</string>
 							<key>BOARD_TAG</key>
-							<string>nano</string>
+							<string>nano328</string>
 						</dict>
 					</dict>
 				</dict>
