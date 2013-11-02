@@ -200,8 +200,12 @@ ECHO    = echo
 MKDIR   = mkdir -p
 
 # General arguments
-USER_LIBS      = $(wildcard $(patsubst %,$(USER_LIB_PATH)/%,$(ARDUINO_LIBS)))
-USER_LIB_NAMES = $(patsubst $(USER_LIB_PATH)/%,%,$(USER_LIBS))
+USER_LIBS_ROOT = $(wildcard $(patsubst %,$(USER_LIB_PATH)/%,$(ARDUINO_LIBS)))
+
+
+USER_LIBS      = $(realpath $(sort $(dir $(foreach dir,$(USER_LIBS_ROOT),$(wildcard $(dir)/*.h $(dir)/*/*.h $(dir)/*/*/*.h )))))
+USER_LIB_NAMES = $(patsubst $(USER_LIB_PATH)/%,%,$(USER_LIBS_ROOT))
+
 
 # Let user libraries override system ones.
 SYS_LIBS       = $(wildcard $(patsubst %,$(ARDUINO_LIB_PATH)/%,$(filter-out $(USER_LIB_NAMES),$(ARDUINO_LIBS))))
