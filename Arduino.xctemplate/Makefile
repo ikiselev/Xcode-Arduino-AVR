@@ -13,45 +13,14 @@ USER_LIB_PATH  = $(wildcard $(ARDUINO_PATHER)/?ibraries)
 TOOLCHAIN_BIN_DIRECTORY = /usr/local/CrossPack-AVR/bin
 
 #
-# MAIN FUNCTION
-#
-TAKE_LOCAL_MAIN_FUNCTION = 0
-
-#
 # CONSOLE OVERRIDE
 #
-BOARD_TAG := atmega8
+BOARD_TAG ?= nano328
 SKETCH_EXTENSION = ino
 
 
 
 PROGRAMMER = usbasp
-
-
-
-#
-# LIBRARIES
-# You need to add folder names of used libraries
-#
-APP_LIBS_LIST =
-USER_LIBS_LIST =
-
-
-#
-# EXCLUDE LIST
-#
-EXCLUDE_LIBS = WiFi Esplora Robot_Control Robot_Control/utility Robot_Motor GSM TFT TFT/utility SoftwareSerial
-EXCLUDE_NAMES  = Example example Examples examples Archive archive Archives archives Documentation documentation Reference reference
-EXCLUDE_NAMES += ArduinoTestSuite
-EXCLUDE_NAMES += $(EXCLUDE_LIBS)
-EXCLUDE_LIST   = $(addprefix %,$(EXCLUDE_NAMES))
-
-
-
-
-
-
-
 
 
 
@@ -75,11 +44,7 @@ TARGET := sketch
 OBJDIR = ../build/Makefile
 
 
-ifeq ($(TAKE_LOCAL_MAIN_FUNCTION),1)
-	MAIN_CPP = main.cpp
-else
-	MAIN_CPP = $(CORE_LIB_PATH)/main.cpp
-endif
+MAIN_CPP = $(CORE_LIB_PATH)/main.cpp
 
 
 # Function PARSE_BOARD data retrieval from boards.txt
@@ -179,42 +144,47 @@ ifdef ISP_EXT_FUSE
 endif
 
 
-# CORE libraries
+# CORE sources
 #
 s5              = $(subst .h,,$(subst $(CORE_LIB_PATH)/,,$(wildcard $(CORE_LIB_PATH)/*.h))) # */
-CORE_LIBS_LIST  = $(subst $(USER_LIB_PATH)/,,$(filter-out $(EXCLUDE_LIST),$(s5)))
+CORE_LIBS_LIST  = $(filter-out $(EXCLUDE_LIST),$(s5))
 
 
 # CORE sources
 #
 ifdef CORE_LIB_PATH
     CORE_C_SRCS     = $(wildcard $(CORE_LIB_PATH)/*.c) # */
-    
-    ifeq ($(strip $(TAKE_LOCAL_MAIN_FUNCTION)),1)
-    	CORE_CPP_SRCS = $(filter-out %main.cpp, $(wildcard $(CORE_LIB_PATH)/*.cpp $(CORE_LIB_PATH)/*/*.cpp)) # */
-    else
-        CORE_CPP_SRCS = $(wildcard $(CORE_LIB_PATH)/*.cpp $(CORE_LIB_PATH)/*/*.cpp) # */
-    endif
 
-    CORE_OBJ_FILES  = $(CORE_C_SRCS:.c=.o) $(CORE_CPP_SRCS:.cpp=.o) $(CORE_AS_SRCS:.S=.o) 
+    CORE_CPP_SRCS = $(wildcard $(CORE_LIB_PATH)/*.cpp $(CORE_LIB_PATH)/*/*.cpp) # */
+
+    CORE_OBJ_FILES  = $(CORE_C_SRCS:.c=.o) $(CORE_CPP_SRCS:.cpp=.o) $(CORE_AS_SRCS:.S=.o)
     CORE_OBJS       = $(patsubst $(CORE_LIB_PATH)/%,$(OBJDIR)/%,$(CORE_OBJ_FILES))
 endif
 
+#Local
 
-# Application Arduino
-#
-ifeq ($(APP_LIBS_LIST),)
-    s1         = $(realpath $(sort $(dir $(wildcard $(APP_LIB_PATH)/*/*.h $(APP_LIB_PATH)/*/*/*.h)))) # */
-    APP_LIBS_LIST = $(subst $(APP_LIB_PATH)/,,$(filter-out $(EXCLUDE_LIST),$(s1)))
-endif
+LOCAL_C_SRCS    = $(wildcard *.c)
+LOCAL_CPP_SRCS  = $(filter-out %main.cpp, $(wildcard *.cpp))
+LOCAL_CC_SRCS   = $(wildcard *.cc)
+LOCAL_INO_SRCS  = $(wildcard *.ino)
+LOCAL_SRCS      = $(LOCAL_C_SRCS) $(LOCAL_CPP_SRCS) $(LOCAL_CC_SRCS) $(LOCAL_INO_SRCS)
 
-ifndef APP_LIBS
+
+# automatically determine Arduino/libraries included libraries
+USER_LIBS_LIST = $(filter $(notdir $(wildcard $(USER_LIB_PATH)/*)), \
+    $(shell sed -ne "s/^ *\# *include *[<\"]\(.*\)\.h[>\"]/\1/p" $(LOCAL_SRCS)))
+
+# automatically determine Arduino/Framework/Libraries included libraries
+APP_LIBS_LIST = $(filter $(notdir $(wildcard $(APP_LIB_PATH)/*)), \
+    $(shell sed -ne "s/^ *\# *include *[<\"]\(.*\)\.h[>\"]/\1/p" $(LOCAL_SRCS)))
+
+
+
 ifneq ($(APP_LIBS_LIST),0)
 	s4         = $(patsubst %,$(APP_LIB_PATH)/%,$(APP_LIBS_LIST))
 	APP_LIBS   = $(realpath $(sort $(dir $(foreach dir,$(s4),$(wildcard $(dir)/*.h $(dir)/*/*.h $(dir)/*/*/*.h)))))
-    
 endif
-endif
+
 
 ifndef APP_LIB_OBJS
     APP_LIB_C_SRC     = $(wildcard $(patsubst %,%/*.c,$(APP_LIBS))) # */
@@ -223,13 +193,6 @@ ifndef APP_LIB_OBJS
     APP_LIB_OBJS     += $(patsubst $(APP_LIB_PATH)/%.cpp,$(OBJDIR)/libs/%.o,$(APP_LIB_CPP_SRC))
 endif 
 
-
-# USER libraries
-#
-ifndef USER_LIBS_LIST
-	s2               = $(realpath $(sort $(dir $(wildcard $(USER_LIB_PATH)/*/*.h)))) # */
-    USER_LIBS_LIST   = $(subst $(USER_LIB_PATH)/,,$(filter-out $(EXCLUDE_LIST),$(s2)))
-endif
 
 ifneq ($(USER_LIBS_LIST),0)
     s3               = $(patsubst %,$(USER_LIB_PATH)/%,$(USER_LIBS_LIST))
@@ -243,26 +206,12 @@ ifneq ($(USER_LIBS_LIST),0)
 endif
 
 
-# LOCAL sources
+# LOCAL obj
 #
-LOCAL_C_SRCS    = $(wildcard *.c)
 
-ifeq ($(strip $(TAKE_LOCAL_MAIN_FUNCTION)),1)
-	LOCAL_CPP_SRCS = $(wildcard *.cpp)
-else
-    LOCAL_CPP_SRCS = $(filter-out %main.cpp, $(wildcard *.cpp))
-endif
-
-
-LOCAL_CC_SRCS   = $(wildcard *.cc)
-
-# Use of implicit rule for LOCAL_PDE_SRCS
-# wtf???
-#LOCAL_PDE_SRCS  = $(wildcard *.$(SKETCH_EXTENSION))
-LOCAL_AS_SRCS   = $(wildcard *.S)
 LOCAL_OBJ_FILES = $(LOCAL_C_SRCS:.c=.o) $(LOCAL_CPP_SRCS:.cpp=.o) \
 		$(LOCAL_PDE_SRCS:.$(SKETCH_EXTENSION)=.o) \
-		$(LOCAL_CC_SRCS:.cc=.o) $(LOCAL_AS_SRCS:.S=.o)
+		$(LOCAL_CC_SRCS:.cc=.o)
 LOCAL_OBJS      = $(patsubst %,$(OBJDIR)/%,$(LOCAL_OBJ_FILES))
 
 
@@ -610,7 +559,7 @@ endif
 # Rules
 # ----------------------------------
 #
-all: 		info message_all clean compile upload end_all
+all: 		info message_all compile upload end_all
 
 build: 		info message_build clean compile end_build
 
