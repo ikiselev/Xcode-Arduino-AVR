@@ -130,11 +130,6 @@
 			<key>Path</key>
 			<string>Makefile</string>
 		</dict>
-		<key>main.cpp</key>
-		<dict>
-			<key>Path</key>
-			<string>main.cpp</string>
-		</dict>
 	</dict>
 	<key>Nodes</key>
 	<array>
@@ -143,7 +138,6 @@
 		<string>Includes/README.md</string>
 		<string>Sources/README.md</string>
 		<string>Makefile</string>
-		<string>main.cpp</string>
 	</array>
 	<key>Project</key>
 	<dict>
