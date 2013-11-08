@@ -157,6 +157,16 @@
 	<key>Targets</key>
 	<array>
 		<dict>
+			<key>Configurations</key>
+			<dict>
+				<key>Release</key>
+				<dict>
+					<key>COPY_PHASE_STRIP</key>
+					<string>YES</string>
+					<key>DEBUG_INFORMATION_FORMAT</key>
+					<string>dwarf-with-dsym</string>
+				</dict>
+			</dict>
 			<key>Name</key>
 			<string>FLASH</string>
 			<key>BuildToolPath</key>
