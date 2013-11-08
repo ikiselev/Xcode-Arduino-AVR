@@ -1,7 +1,7 @@
 /* Name: ___PROJECTNAME___
  * Author: ___FULLUSERNAME___, ___DATE___ ___TIME___
  */
-
+#include "Arduino.h"
 // Define variables and constants
 
 uint8_t myLED;
